@@ -1,0 +1,146 @@
+# ===================================
+# BRAINCORE .gitignore
+# ===================================
+
+# ===================================
+# Environment variables
+# ===================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ===================================
+# Dependencies
+# ===================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ===================================
+# Build outputs
+# ===================================
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+public/build/
+*.tsbuildinfo
+
+# ===================================
+# IDE & Editor
+# ===================================
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+.settings/
+
+# ===================================
+# Operating System
+# ===================================
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+
+# ===================================
+# Logs
+# ===================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+
+# ===================================
+# Testing
+# ===================================
+coverage/
+.nyc_output/
+*.lcov
+.jest/
+
+# ===================================
+# Temporary files
+# ===================================
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+
+# ===================================
+# Supabase
+# ===================================
+.supabase/
+supabase/.branches/
+supabase/.temp/
+
+# ===================================
+# Stripe
+# ===================================
+.stripe/
+
+# ===================================
+# Docker
+# ===================================
+.docker/
+*.dockerfile.swp
+
+# ===================================
+# Security
+# ===================================
+*.pem
+*.key
+*.cert
+*.crt
+secrets/
+credentials/
+
+# ===================================
+# Database
+# ===================================
+*.db
+*.sqlite
+*.sqlite3
+
+# ===================================
+# Misc
+# ===================================
+.vercel
+.netlify
+.firebase

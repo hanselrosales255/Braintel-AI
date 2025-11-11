@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Panel de control de BrainCore - Gestiona tu teleoperadora IA">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#1F2937">
+    
+    <title>BrainCore - Dashboard</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/assets/BrainCoreLogo_sin_Fondo.png" as="image">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" as="style">
+    
+    <!-- CSS Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-blue: #3B82F6;
+            --secondary-purple: #8B5CF6;
+            --dark-bg: #0F172A;
+            --dark-card: #1E293B;
+            --dark-sidebar: #1E293B;
+            --gray-text: #94A3B8;
+            --border-color: #334155;
+            --success-color: #10B981;
+            --error-color: #EF4444;
+            --warning-color: #F59E0B;
+            --info-color: #06B6D4;
+        }
+
+        /* Background pattern */
+        body {
+            background-color: var(--dark-bg);
+            background-image: 
+                radial-gradient(at 40% 20%, rgba(59, 130, 246, 0.08) 0, transparent 50%),
+                radial-gradient(at 80% 80%, rgba(139, 92, 246, 0.08) 0, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(236, 72, 153, 0.08) 0, transparent 50%);
+        }
+
+        /* Performance optimized animations */
+        @keyframes pulse {
+            0%, 100% { 
+                transform: scale(1); 
+                opacity: 1;
+            }
+            50% { 
+                transform: scale(1.05); 
+                opacity: 0.9;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        /* Gradient effects */
+        .gradient-text {
+            background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 50%, #EC4899 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s infinite linear;
+            background-size: 1000px 100%;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+        }
+
+        .gradient-border {
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6, #EC4899);
+            padding: 1px;
+            border-radius: 1rem;
+        }
+
+        /* Animations */
+        .pulse-animation {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Loading skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #1E293B 25%, #334155 50%, #1E293B 75%);
+            background-size: 1000px 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
+        }
+
+        .sidebar-collapsed {
+            transform: translateX(-100%);
+        }
+
+        .nav-item {
+            transition: all 0.3s ease-in-out;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            transform: translateX(6px);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            border-left: 3px solid;
+            border-image: linear-gradient(180deg, #3B82F6, #8B5CF6) 1;
+        }
+
+        /* Card styles */
+        .stat-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(30, 41, 59, 0.7));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3B82F6, #8B5CF6, #EC4899);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.3), 0 0 0 1px rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        /* Chart container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(30, 41, 59, 0.7));
+            backdrop-filter: blur(20px);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        /* Table styles */
+        .data-table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .data-table th {
+            background: var(--dark-sidebar);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .data-table tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+
+        /* Status indicators */
+        .status-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .status-warning {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .status-error {
+            background-color: var(--error-color);
+            color: white;
+        }
+
+        .status-info {
+            background-color: var(--info-color);
+            color: white;
+        }
+
+        /* Form elements */
+        .form-input {
+            background: var(--dark-sidebar);
+            border: 1px solid var(--border-color);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            outline: none;
+        }
+
+        .form-input:hover {
+            border-color: var(--gray-text);
+        }
+
+        /* Button styles */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-purple));
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Loading states */
+        .loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                z-index: 50;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .chart-container {
+                height: 250px;
+            }
+        }
+
+        /* Accessibility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus styles */
+        .focus-visible:focus {
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
+        }
+
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            padding: 16px 24px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--success-color);
+        }
+
+        .notification.error {
+            background: var(--error-color);
+        }
+
+        .notification.warning {
+            background: var(--warning-color);
+        }
+
+        .notification.info {
+            background: var(--info-color);
+        }
+
+        /* Progress bars */
+        .progress-bar {
+            background: var(--dark-sidebar);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-purple));
+            height: 100%;
+            transition: width 0.5s ease;
+            border-radius: inherit;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .tooltip:hover::before {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Real-time indicator */
+        .realtime-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success-color);
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 10px var(--success-color);
+        }
+
+        /* Dark scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-sidebar);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-text);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 min-h-screen text-white">
+    <!-- Mobile overlay -->
+    <div id="mobileOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 w-64 bg-gray-800 p-4 z-50" role="navigation" aria-label="Panel de navegación principal">
+        <!-- Logo -->
+        <div class="flex items-center mb-8 slide-in">
+            <img src="/assets/BrainCoreLogo_sin_Fondo.png" 
+                 class="h-8 w-auto mr-2" 
+                 alt="BrainCore Logo"
+                 loading="eager">
+            <span class="text-xl font-bold gradient-text">BrainCore</span>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="space-y-2" role="menu">
+            <a href="#dashboard" 
+               class="nav-item active flex items-center p-3 rounded-lg text-white font-medium focus-visible"
+               role="menuitem"
+               data-section="dashboard">
+                <i class="ri-dashboard-line mr-3 text-lg" aria-hidden="true"></i>
+                Dashboard
+            </a>
+            <a href="#calls" 
+               class="nav-item flex items-center p-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white font-medium focus-visible"
+               role="menuitem"
+               data-section="calls">
+                <i class="ri-phone-line mr-3 text-lg" aria-hidden="true"></i>
+                Llamadas
+            </a>
+            <a href="#agent" 
+               class="nav-item flex items-center p-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white font-medium focus-visible"
+               role="menuitem"
+               data-section="agent">
+                <i class="ri-robot-line mr-3 text-lg" aria-hidden="true"></i>
+                Configuración IA
+            </a>
+            <a href="#analytics" 
+               class="nav-item flex items-center p-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white font-medium focus-visible"
+               role="menuitem"
+               data-section="analytics">
+                <i class="ri-bar-chart-line mr-3 text-lg" aria-hidden="true"></i>
+                Análisis
+            </a>
+            <a href="#settings" 
+               class="nav-item flex items-center p-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white font-medium focus-visible"
+               role="menuitem"
+               data-section="settings">
+                <i class="ri-settings-line mr-3 text-lg" aria-hidden="true"></i>
+                Ajustes
+            </a>
+        </nav>
+
+        <!-- User info & logout -->
+        <div class="absolute bottom-4 left-0 w-full px-4">
+            <div class="bg-gray-700 rounded-lg p-3 mb-3">
+                <div class="flex items-center space-x-3">
+                    <img id="userAvatar" 
+                         src="https://api.dicebear.com/7.x/avatars/svg?seed=default" 
+                         class="w-8 h-8 rounded-full"
+                         alt="Avatar del usuario">
+                    <div class="flex-1 min-w-0">
+                        <p id="userDisplayName" class="text-sm font-medium text-white truncate">Usuario</p>
+                        <p id="userPlan" class="text-xs text-gray-400 truncate">Plan Business</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="btnLogout" 
+                    class="w-full flex items-center justify-center p-3 rounded-lg text-gray-400 hover:bg-red-600 hover:text-white transition-all duration-200 focus-visible">
+                <i class="ri-logout-box-line mr-2" aria-hidden="true"></i>
+                Cerrar Sesión
+            </button>
+        </div>
+    </aside>
+
+    <!-- Mobile menu button -->
+    <button id="mobileMenuBtn" 
+            class="fixed top-4 left-4 z-50 md:hidden bg-gray-800 text-white p-2 rounded-lg focus-visible"
+            aria-label="Abrir menú de navegación">
+        <i class="ri-menu-line text-xl"></i>
+    </button>
+
+    <!-- Main Content -->
+    <main class="main-content ml-0 md:ml-64 p-4 md:p-8 min-h-screen">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row md:justify-between md:items-center mb-8 fade-in">
+            <div class="mb-4 md:mb-0">
+                <h1 class="text-2xl md:text-3xl font-bold gradient-text">Dashboard</h1>
+                <p class="text-gray-400 mt-1">Panel de control de tu teleoperadora IA</p>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <!-- Status indicator -->
+                <div id="connectionStatus" class="flex items-center space-x-2">
+                    <div class="realtime-dot"></div>
+                    <span class="text-sm font-medium text-success-color">En línea</span>
+                </div>
+                
+                <!-- Refresh button -->
+                <button id="refreshBtn" 
+                        class="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors focus-visible tooltip"
+                        data-tooltip="Actualizar datos"
+                        aria-label="Actualizar dashboard">
+                    <i class="ri-refresh-line text-lg"></i>
+                </button>
+                
+                <!-- Time range selector -->
+                <select id="timeRange" 
+                        class="bg-gray-800 text-white rounded-lg px-3 py-2 text-sm border border-gray-600 focus:border-blue-500 focus:outline-none">
+                    <option value="today">Hoy</option>
+                    <option value="7days" selected>Últimos 7 días</option>
+                    <option value="30days">Últimos 30 días</option>
+                    <option value="90days">Últimos 90 días</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" aria-label="Métricas principales">
+            <!-- Total Calls -->
+            <div class="stat-card rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-gray-400 text-sm font-medium">Total de llamadas</h3>
+                        <div id="totalCalls" class="text-3xl font-bold mt-2 skeleton">0</div>
+                    </div>
+                    <div class="p-3 bg-blue-500 bg-opacity-20 rounded-lg">
+                        <i class="ri-phone-line text-blue-500 text-2xl"></i>
+                    </div>
+                </div>
+                <div class="flex items-center text-sm">
+                    <span id="callsChange" class="text-success-color flex items-center">
+                        <i class="ri-arrow-up-line mr-1"></i>
+                        +0%
+                    </span>
+                    <span class="text-gray-400 ml-1">vs período anterior</span>
+                </div>
+            </div>
+            
+            <!-- Used Interactions -->
+            <div class="stat-card rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-gray-400 text-sm font-medium">Interacciones usadas</h3>
+                        <div id="usedInteractions" class="text-3xl font-bold mt-2 skeleton">0</div>
+                    </div>
+                    <div class="p-3 bg-purple-500 bg-opacity-20 rounded-lg">
+                        <i class="ri-bubble-chart-line text-purple-500 text-2xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="progress-bar h-2">
+                        <div id="usageProgress" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-400 mt-1">
+                        <span id="usageText">0 de 0</span>
+                        <span id="usagePercentage">0%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Plan Limit -->
+            <div class="stat-card rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-gray-400 text-sm font-medium">Límite del plan</h3>
+                        <div id="planLimit" class="text-3xl font-bold mt-2 skeleton">0</div>
+                    </div>
+                    <div class="p-3 bg-yellow-500 bg-opacity-20 rounded-lg">
+                        <i class="ri-rocket-line text-yellow-500 text-2xl"></i>
+                    </div>
+                </div>
+                <div class="text-sm text-gray-400 mt-2">
+                    <span id="planName">Cargando...</span>
+                </div>
+            </div>
+
+            <!-- Average Duration -->
+            <div class="stat-card rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-gray-400 text-sm font-medium">Duración promedio</h3>
+                        <div id="avgDuration" class="text-3xl font-bold mt-2 skeleton">0s</div>
+                    </div>
+                    <div class="p-3 bg-green-500 bg-opacity-20 rounded-lg">
+                        <i class="ri-time-line text-green-500 text-2xl"></i>
+                    </div>
+                </div>
+                <div class="flex items-center text-sm">
+                    <span id="durationChange" class="text-gray-400">
+                        Sin cambios
+                    </span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Charts Section -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8" aria-label="Gráficos de análisis">
+            <!-- Calls Activity Chart -->
+            <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-white">Actividad de llamadas</h3>
+                    <div class="flex items-center space-x-2">
+                        <button id="chartTypeToggle" 
+                                class="text-xs bg-gray-700 text-gray-300 px-3 py-1 rounded-lg hover:bg-gray-600 transition-colors focus-visible">
+                            Líneas
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="callsChart" role="img" aria-label="Gráfico de actividad de llamadas"></canvas>
+                </div>
+            </div>
+
+            <!-- Duration Chart -->
+            <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-white">Duración de llamadas</h3>
+                    <select id="durationTimeframe" 
+                            class="text-xs bg-gray-700 text-white rounded-lg px-3 py-1 border border-gray-600 focus:border-blue-500 focus:outline-none">
+                        <option value="hourly">Por hora</option>
+                        <option value="daily" selected>Por día</option>
+                        <option value="weekly">Por semana</option>
+                    </select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="durationChart" role="img" aria-label="Gráfico de duración de llamadas"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Calls Table -->
+        <section class="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden mb-8" aria-label="Llamadas recientes">
+            <div class="p-6">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                    <h3 class="text-xl font-semibold mb-4 md:mb-0">Últimas llamadas</h3>
+                    <div class="flex items-center space-x-4">
+                        <!-- Search -->
+                        <div class="relative">
+                            <input id="searchCalls" 
+                                   type="text" 
+                                   placeholder="Buscar llamadas..."
+                                   class="form-input pl-10 pr-4 py-2 w-64 rounded-lg text-sm">
+                            <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                        
+                        <!-- View all button -->
+                        <button id="viewAllCalls" 
+                                class="text-sm text-blue-400 hover:text-blue-300 font-medium focus-visible">
+                            Ver todas
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Loading state -->
+                <div id="tableLoading" class="text-center py-8 hidden">
+                    <div class="spinner mx-auto mb-4"></div>
+                    <p class="text-gray-400">Cargando llamadas...</p>
+                </div>
+                
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="data-table w-full" role="table">
+                        <thead>
+                            <tr class="text-gray-400 border-b border-gray-700">
+                                <th class="p-4 text-left font-medium">Cliente</th>
+                                <th class="p-4 text-left font-medium">Teléfono</th>
+                                <th class="p-4 text-left font-medium">Servicio</th>
+                                <th class="p-4 text-left font-medium">Fecha</th>
+                                <th class="p-4 text-left font-medium">Duración</th>
+                                <th class="p-4 text-left font-medium">Estado</th>
+                                <th class="p-4 text-left font-medium">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="callsTableBody" class="divide-y divide-gray-700">
+                            <!-- Las filas se insertarán dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Empty state -->
+                <div id="emptyState" class="text-center py-12 hidden">
+                    <div class="text-gray-500 text-6xl mb-4">
+                        <i class="ri-phone-line"></i>
+                    </div>
+                    <h4 class="text-lg font-medium text-gray-400 mb-2">No hay llamadas aún</h4>
+                    <p class="text-gray-500">Las llamadas aparecerán aquí cuando se realicen</p>
+                </div>
+                
+                <!-- Pagination -->
+                <div id="pagination" class="flex items-center justify-between mt-6 pt-4 border-t border-gray-700 hidden">
+                    <div class="text-sm text-gray-400">
+                        Mostrando <span id="showingFrom">1</span>-<span id="showingTo">10</span> de <span id="totalRecords">0</span> registros
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button id="prevPage" 
+                                class="px-3 py-1 bg-gray-700 text-gray-300 rounded hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed focus-visible">
+                            Anterior
+                        </button>
+                        <div id="pageNumbers" class="flex items-center space-x-1">
+                            <!-- Page numbers will be inserted here -->
+                        </div>
+                        <button id="nextPage" 
+                                class="px-3 py-1 bg-gray-700 text-gray-300 rounded hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed focus-visible">
+                            Siguiente
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Agent Configuration -->
+        <section class="bg-gray-800 rounded-xl border border-gray-700 p-

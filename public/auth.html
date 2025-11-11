@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Inicia sesión o regístrate en BrainCore - Tu plataforma de IA para atención al cliente">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#1F2937">
+    
+    <title>BrainCore - Autenticación</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/assets/BrainCoreLogo_sin_Fondo.png" as="image">
+    <link rel="preload" href="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2072&q=80" as="image">
+    
+    <!-- CSS Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-blue: #3B82F6;
+            --secondary-purple: #8B5CF6;
+            --dark-bg: #0F172A;
+            --dark-card: #1E293B;
+            --gray-text: #94A3B8;
+            --border-color: #475569;
+            --success-color: #10B981;
+            --error-color: #EF4444;
+            --warning-color: #F59E0B;
+        }
+
+        /* Background pattern */
+        body {
+            background-color: var(--dark-bg);
+            background-image: 
+                radial-gradient(at 40% 20%, rgba(59, 130, 246, 0.1) 0, transparent 50%),
+                radial-gradient(at 80% 80%, rgba(139, 92, 246, 0.1) 0, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(236, 72, 153, 0.1) 0, transparent 50%);
+        }
+
+        /* Performance optimized animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        /* Gradient effects */
+        .gradient-text {
+            background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 50%, #EC4899 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s infinite linear;
+            background-size: 1000px 100%;
+        }
+
+        .gradient-border {
+            position: relative;
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6, #EC4899);
+            padding: 2px;
+            border-radius: 1.5rem;
+        }
+
+        .gradient-button {
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gradient-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .gradient-button:hover::before {
+            left: 100%;
+        }
+
+        .gradient-button:hover {
+            background: linear-gradient(135deg, #2563EB, #7C3AED);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.4);
+        }
+
+        .gradient-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Enhanced glass morphism */
+        .glass-effect {
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Enhanced floating label */
+        .floating-label {
+            position: absolute;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--gray-text);
+            background: transparent;
+            padding: 0 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .input-field {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        .input-field:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), 0 10px 30px rgba(59, 130, 246, 0.2);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .input-field:focus ~ .floating-label,
+        .input-field:not(:placeholder-shown) ~ .floating-label,
+        .input-field.has-value ~ .floating-label {
+            top: 0;
+            transform: translateY(-50%) scale(0.85);
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+
+        .input-field.error {
+            border-color: var(--error-color);
+            background-color: rgba(239, 68, 68, 0.1);
+            animation: shake 0.5s;
+        }
+
+        .input-field.error ~ .floating-label {
+            color: var(--error-color);
+        }
+
+        .input-field.success {
+            border-color: var(--success-color);
+            background-color: rgba(16, 185, 129, 0.08);
+        }
+
+        .input-field.success ~ .floating-label {
+            color: var(--success-color);
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        /* Button states */
+        .btn-loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        /* Message styles */
+        .message {
+            padding: 1rem 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .message.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .message.error {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.15));
+            border: 1.5px solid rgba(239, 68, 68, 0.5);
+            color: #FCA5A5;
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2);
+        }
+
+        .message.success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15));
+            border: 1.5px solid rgba(16, 185, 129, 0.5);
+            color: #6EE7B7;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+        }
+
+        .message.warning {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.15));
+            border: 1.5px solid rgba(245, 158, 11, 0.5);
+            color: #FCD34D;
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.2);
+        }
+
+        /* Form animation */
+        .form-transition {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .form-slide-out {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .form-slide-in {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Accessibility improvements */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus styles */
+        .focus-visible:focus {
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
+        }
+
+        /* Password strength indicator */
+        .password-strength {
+            height: 6px;
+            background: linear-gradient(90deg, 
+                rgba(71, 85, 105, 0.3) 0%, 
+                rgba(71, 85, 105, 0.1) 100%);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 0.75rem;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 3px;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .strength-weak { 
+            background: linear-gradient(90deg, #EF4444, #DC2626); 
+            width: 25%;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+        }
+        .strength-fair { 
+            background: linear-gradient(90deg, #F59E0B, #D97706); 
+            width: 50%;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
+        }
+        .strength-good { 
+            background: linear-gradient(90deg, #3B82F6, #2563EB); 
+            width: 75%;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+        }
+        .strength-strong { 
+            background: linear-gradient(90deg, #10B981, #059669); 
+            width: 100%;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.7);
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 640px) {
+            .glass-effect {
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                margin: 1rem;
+            }
+            
+            .floating-label {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Background overlay */
+        .bg-overlay {
+            background: linear-gradient(135deg, rgba(17, 25, 40, 0.9), rgba(59, 130, 246, 0.1));
+        }
+
+        /* Form validation */
+        .validation-message {
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .validation-error {
+            color: var(--error-color);
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .validation-success {
+            color: var(--success-color);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 min-h-screen flex items-center justify-center relative overflow-hidden">
+    <!-- Background with overlay -->
+    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2072&q=80')] bg-cover bg-center bg-no-repeat">
+        <div class="absolute inset-0 bg-overlay"></div>
+    </div>
+    
+    <!-- Skip to main content for accessibility -->
+    <a href="#auth-form" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white p-2 rounded z-50">
+        Saltar al formulario de autenticación
+    </a>
+
+    <!-- Main Authentication Container -->
+    <main class="w-full max-w-md p-1 animate__animated animate__fadeIn relative z-10">
+        <div class="gradient-border">
+            <div class="glass-effect p-8 rounded-2xl w-full">
+                <!-- Logo -->
+                <header class="flex justify-center mb-8">
+                    <a href="/" 
+                       class="hover:opacity-90 transition-opacity focus-visible"
+                       aria-label="Volver a BrainCore">
+                        <img src="/assets/BrainCoreLogo_sin_Fondo.png" 
+                             class="h-12 w-auto" 
+                             alt="BrainCore Logo"
+                             loading="eager">
+                    </a>
+                </header>
+                
+                <!-- Authentication Container -->
+                <section id="authContainer" aria-labelledby="authTitle">
+                    <h1 id="authTitle" class="text-2xl font-bold mb-6 text-white text-center gradient-text">
+                        Inicia Sesión en BrainCore
+                    </h1>
+                    
+                    <!-- Authentication Form -->
+                    <form id="auth-form" class="space-y-6" novalidate>
+                        <!-- Email Field -->
+                        <div class="relative">
+                            <input 
+                                id="email" 
+                                name="email"
+                                type="email" 
+                                placeholder=" " 
+                                required
+                                autocomplete="email"
+                                aria-describedby="email-error"
+                                class="input-field w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none text-white transition-all duration-300" 
+                            >
+                            <label for="email" class="floating-label">
+                                Email *
+                            </label>
+                            <div id="email-error" class="validation-message" role="alert" aria-live="polite"></div>
+                        </div>
+                        
+                        <!-- Password Field -->
+                        <div class="relative">
+                            <input 
+                                id="password" 
+                                name="password"
+                                type="password" 
+                                placeholder=" " 
+                                required
+                                autocomplete="current-password"
+                                aria-describedby="password-error password-strength-text"
+                                class="input-field w-full px-4 py-3 pr-12 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none text-white transition-all duration-300" 
+                            >
+                            <label for="password" class="floating-label">
+                                Contraseña *
+                            </label>
+                            
+                            <!-- Password toggle button -->
+                            <button 
+                                type="button" 
+                                id="togglePassword"
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors focus-visible"
+                                aria-label="Mostrar/ocultar contraseña">
+                                <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                                <svg id="eyeSlashIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L8.05 8.05M19.95 19.95l-2.12-2.12M9.878 9.878L8.05 8.05m11.9 11.9L8.05 8.05"></path>
+                                </svg>
+                            </button>
+                            
+                            <!-- Password strength indicator (only for registration) -->
+                            <div id="passwordStrength" class="password-strength hidden">
+                                <div id="passwordStrengthBar" class="password-strength-bar"></div>
+                            </div>
+                            <div id="password-strength-text" class="text-xs text-gray-400 mt-1 hidden" aria-live="polite"></div>
+                            <div id="password-error" class="validation-message" role="alert" aria-live="polite"></div>
+                        </div>
+
+                        <!-- Confirm Password Field (only for registration) -->
+                        <div id="confirmPasswordGroup" class="relative hidden">
+                            <input 
+                                id="confirmPassword" 
+                                name="confirmPassword"
+                                type="password" 
+                                placeholder=" " 
+                                autocomplete="new-password"
+                                aria-describedby="confirm-password-error"
+                                class="input-field w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none text-white transition-all duration-300" 
+                            >
+                            <label for="confirmPassword" class="floating-label">
+                                Confirmar Contraseña *
+                            </label>
+                            <div id="confirm-password-error" class="validation-message" role="alert" aria-live="polite"></div>
+                        </div>
+
+                        <!-- Terms and conditions (only for registration) -->
+                        <div id="termsGroup" class="hidden">
+                            <label class="flex items-start space-x-3 cursor-pointer">
+                                <input 
+                                    type="checkbox" 
+                                    id="acceptTerms"
+                                    name="acceptTerms"
+                                    class="mt-0.5 w-4 h-4 text-blue-600 bg-gray-800 border-gray-600 rounded focus:ring-blue-500 focus:ring-2">
+                                <span class="text-sm text-gray-300 leading-relaxed">
+                                    Acepto los 
+                                    <a href="/terms" target="_blank" class="text-blue-400 hover:text-blue-300 underline focus-visible">
+                                        Términos y Condiciones
+                                    </a> 
+                                    y la 
+                                    <a href="/privacy" target="_blank" class="text-blue-400 hover:text-blue-300 underline focus-visible">
+                                        Política de Privacidad
+                                    </a>
+                                </span>
+                            </label>
+                            <div id="terms-error" class="validation-message" role="alert" aria-live="polite"></div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="space-y-4">
+                            <!-- Sign In Form -->
+                            <div id="signInForm" class="form-transition">
+                                <button 
+                                    type="submit"
+                                    id="btnSignIn"
+                                    class="gradient-button w-full text-white py-3 px-4 rounded-lg font-medium flex items-center justify-center transition-all duration-300 focus-visible"
+                                    aria-describedby="signin-status">
+                                    <span id="signinText">Iniciar Sesión</span>
+                                    <svg id="signinSpinner" class="loading-spinner ml-3 h-5 w-5 text-white hidden" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </button>
+                                <div id="signin-status" class="sr-only" aria-live="polite"></div>
+                                
+                                <p class="text-center text-gray-400 mt-4">
+                                    <span>¿No tienes cuenta?</span>
+                                    <button 
+                                        type="button"
+                                        id="toggleSignUp" 
+                                        class="text-blue-400 hover:text-blue-300 font-medium ml-2 underline focus-visible">
+                                        Regístrate
+                                    </button>
+                                </p>
+                                
+                                <!-- Forgot password -->
+                                <div class="text-center mt-3">
+                                    <button 
+                                        type="button"
+                                        id="forgotPassword"
+                                        class="text-gray-400 hover:text-white text-sm underline focus-visible">
+                                        ¿Olvidaste tu contraseña?
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Sign Up Form -->
+                            <div id="signUpForm" class="form-transition hidden">
+                                <button 
+                                    type="submit"
+                                    id="btnSignUp"
+                                    class="gradient-button w-full text-white py-3 px-4 rounded-lg font-medium flex items-center justify-center transition-all duration-300 focus-visible"
+                                    aria-describedby="signup-status">
+                                    <span id="signupText">Crear Cuenta</span>
+                                    <svg id="signupSpinner" class="loading-spinner ml-3 h-5 w-5 text-white hidden" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </button>
+                                <div id="signup-status" class="sr-only" aria-live="polite"></div>
+                                
+                                <p class="text-center text-gray-400 mt-4">
+                                    <span>¿Ya tienes cuenta?</span>
+                                    <button 
+                                        type="button"
+                                        id="toggleSignIn" 
+                                        class="text-blue-400 hover:text-blue-300 font-medium ml-2 underline focus-visible">
+                                        Inicia Sesión
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Message Display -->
+                    <div id="message" class="message mt-6" role="alert" aria-live="assertive"></div>
+
+                    <!-- Back to Home -->
+                    <nav class="mt-6 text-center">
+                        <a href="/" 
+                           class="text-gray-400 hover:text-white transition-colors text-sm focus-visible inline-flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                            </svg>
+                            Volver al Inicio
+                        </a>
+                    </nav>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm items-center justify-center z-50 hidden">
+        <div class="glass-effect p-8 rounded-2xl flex items-center space-x-4 shadow-2xl">
+            <svg class="loading-spinner h-8 w-8 text-blue-400" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span class="text-white font-semibold text-lg">Procesando...</span>
+        </div>
+    </div>
+
+    <!-- Authentication Script -->
+    <script type="module" src="/js/auth.js"></script>
+
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "BrainCore - Autenticación",
+        "description": "Inicia sesión o regístrate en BrainCore para acceder a tu plataforma de IA",
+        "url": "https://braincore.ai/auth",
+        "mainEntity": {
+            "@type": "SoftwareApplication",
+            "name": "BrainCore",
+            "applicationCategory": "BusinessApplication"
+        }
+    }
+    </script>
+</body>
+</html>

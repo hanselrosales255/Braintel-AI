@@ -1,0 +1,70 @@
+{
+  "name": "braincore-ai",
+  "version": "1.0.0",
+  "description": "Plataforma de teleoperadora virtual con IA - Automatiza tu atención al cliente 24/7",
+  "main": "server/create-checkout-session.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server/create-checkout-session.js",
+    "dev": "nodemon server/create-checkout-session.js",
+    "dev:watch": "nodemon --watch server --watch public/js server/create-checkout-session.js",
+    "lint": "eslint . --ext .js",
+    "lint:fix": "eslint . --ext .js --fix",
+    "format": "prettier --write \"**/*.{js,json,md}\"",
+    "test": "echo \"Tests no configurados aún\" && exit 0",
+    "clean": "rm -rf node_modules package-lock.json",
+    "reinstall": "npm run clean && npm install",
+    "check": "npm run lint && npm run format",
+    "setup": "cp .env.example .env && npm install",
+    "prod": "NODE_ENV=production node server/create-checkout-session.js"
+  },
+  "keywords": [
+    "ia",
+    "inteligencia-artificial",
+    "teleoperadora",
+    "atencion-cliente",
+    "automatizacion",
+    "stripe",
+    "supabase",
+    "saas"
+  ],
+  "author": "BrainCore Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.4",
+    "body-parser": "^2.2.0",
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.1",
+    "helmet": "^8.1.0",
+    "morgan": "^1.10.1",
+    "stripe": "^18.5.0",
+    "winston": "^3.18.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "nodemon": "^3.0.2",
+    "prettier": "^3.6.2",
+    "tailwindcss": "^3.4.17"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "server",
+      "public/js"
+    ],
+    "ext": "js,json",
+    "ignore": [
+      "node_modules",
+      "public/assets"
+    ],
+    "delay": "1000"
+  }
+}

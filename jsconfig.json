@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./public/*"],
+      "@js/*": ["./public/js/*"],
+      "@utils/*": ["./public/js/utils/*"],
+      "@config/*": ["./config/*"],
+      "@server/*": ["./server/*"]
+    },
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "resolveJsonModule": true,
+    "checkJs": false,
+    "noEmit": true
+  },
+  "include": ["public/**/*", "server/**/*", "config/**/*"],
+  "exclude": ["node_modules", "dist", "build", ".supabase"]
+}
