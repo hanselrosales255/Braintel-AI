@@ -28,13 +28,11 @@
 
     <!-- Preload critical resources -->
     <link rel="preload" href="/assets/BrainCoreLogo_sin_Fondo.png" as="image" />
+    <link rel="prefetch" href="/auth.html" as="document" />
+    <link rel="prefetch" href="/dashboard.html" as="document" />
 
     <!-- CSS Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
-    />
 
     <!-- JavaScript Libraries -->
     <script src="https://js.stripe.com/v3/"></script>
@@ -153,7 +151,9 @@
       .price-card-popular {
         position: relative;
         transform: scale(1.05);
-        box-shadow: 0 20px 50px -12px rgba(59, 130, 246, 0.5), 0 0 0 1px rgba(59, 130, 246, 0.3);
+        box-shadow:
+          0 20px 50px -12px rgba(59, 130, 246, 0.5),
+          0 0 0 1px rgba(59, 130, 246, 0.3);
         background: linear-gradient(145deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
       }
 
@@ -202,6 +202,47 @@
       .error-message.show {
         display: block;
       }
+
+      .section-reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition:
+          opacity 0.6s ease,
+          transform 0.6s ease;
+      }
+
+      .section-reveal.in-view {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+
+        .float-animation {
+          animation: none;
+        }
+
+        .custom-fade-up {
+          animation: none;
+          opacity: 1;
+        }
+
+        .section-reveal {
+          opacity: 1;
+          transform: none;
+        }
+      }
     </style>
   </head>
   <body class="bg-gray-900 text-white">
@@ -229,6 +270,7 @@
                 class="h-12 w-auto"
                 alt="BrainCore Logo"
                 loading="eager"
+                decoding="async"
               />
             </a>
           </div>
@@ -256,6 +298,7 @@
               </a>
               <a
                 href="/auth.html"
+                data-prefetch="/auth.html"
                 class="ml-4 px-4 py-2 rounded-md text-sm font-medium bg-blue-600 hover:bg-blue-700 transition-all duration-200 focus-visible"
               >
                 Iniciar Sesión
@@ -330,6 +373,7 @@
           >
           <a
             href="/auth.html"
+            data-prefetch="/auth.html"
             class="block px-3 py-2 rounded-md text-base font-medium bg-blue-600 hover:bg-blue-700 text-center"
             >Iniciar Sesión</a
           >
@@ -339,49 +383,83 @@
 
     <main id="main-content">
       <!-- Hero Section -->
-      <section id="inicio" class="relative pt-32 pb-20 overflow-hidden">
+      <section id="inicio" class="relative pt-32 pb-20 overflow-hidden section-reveal in-view">
         <!-- Gradient background -->
-        <div class="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-transparent pointer-events-none"></div>
-        
+        <div
+          class="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-transparent pointer-events-none"
+        ></div>
+
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div class="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
             <div class="mb-12 lg:mb-0">
               <!-- Badge -->
-              <div class="inline-flex items-center px-4 py-2 bg-blue-600/20 rounded-full border border-blue-500/30 mb-6 custom-fade-up">
+              <div
+                class="inline-flex items-center px-4 py-2 bg-blue-600/20 rounded-full border border-blue-500/30 mb-6 custom-fade-up"
+              >
                 <span class="w-2 h-2 bg-blue-500 rounded-full mr-2 animate-pulse"></span>
                 <span class="text-sm font-medium text-blue-300">IA Conversacional Avanzada</span>
               </div>
-              
-              <h1 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight custom-fade-up" style="animation-delay: 0.1s">
-                <span class="gradient-text">Revoluciona</span> tu<br/>
+
+              <h1
+                class="text-5xl sm:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight custom-fade-up"
+                style="animation-delay: 0.1s"
+              >
+                <span class="gradient-text">Revoluciona</span> tu<br />
                 Atención al Cliente
               </h1>
-              
-              <p class="text-xl text-gray-300 mb-8 leading-relaxed max-w-xl custom-fade-up" style="animation-delay: 0.2s">
-                Automatiza tus llamadas y mensajes con inteligencia artificial avanzada. 
-                <span class="text-white font-semibold">Brinda atención 24/7</span> sin comprometer la calidad.
+
+              <p
+                class="text-xl text-gray-300 mb-8 leading-relaxed max-w-xl custom-fade-up"
+                style="animation-delay: 0.2s"
+              >
+                Automatiza tus llamadas y mensajes con inteligencia artificial avanzada.
+                <span class="text-white font-semibold">Brinda atención 24/7</span> sin comprometer
+                la calidad.
               </p>
-              
-              <div class="flex flex-col sm:flex-row gap-4 custom-fade-up" style="animation-delay: 0.3s">
-                <a href="/auth.html?register=true" 
-                   class="group inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 rounded-xl font-semibold shadow-lg shadow-blue-500/50 hover:shadow-blue-500/70 transition-all duration-300 transform hover:-translate-y-0.5 focus-visible">
+
+              <div
+                class="flex flex-col sm:flex-row gap-4 custom-fade-up"
+                style="animation-delay: 0.3s"
+              >
+                <a
+                  href="/auth.html?register=true"
+                  data-prefetch="/auth.html"
+                  class="group inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 rounded-xl font-semibold shadow-lg shadow-blue-500/50 hover:shadow-blue-500/70 transition-all duration-300 transform hover:-translate-y-0.5 focus-visible"
+                >
                   <span>Comenzar Ahora</span>
-                  <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                  <svg
+                    class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    ></path>
                   </svg>
                 </a>
-                
-                <a href="#demo" 
-                   class="inline-flex items-center justify-center px-8 py-4 bg-gray-800/50 backdrop-blur-sm border border-gray-700 hover:bg-gray-700/50 hover:border-gray-600 rounded-xl font-semibold transition-all duration-300 focus-visible">
+
+                <a
+                  href="#demo"
+                  class="inline-flex items-center justify-center px-8 py-4 bg-gray-800/50 backdrop-blur-sm border border-gray-700 hover:bg-gray-700/50 hover:border-gray-600 rounded-xl font-semibold transition-all duration-300 focus-visible"
+                >
                   <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path>
+                    <path
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                    ></path>
                   </svg>
                   <span>Ver Demo</span>
                 </a>
               </div>
-              
+
               <!-- Stats -->
-              <div class="grid grid-cols-3 gap-6 mt-12 custom-fade-up" style="animation-delay: 0.4s">
+              <div
+                class="grid grid-cols-3 gap-6 mt-12 custom-fade-up"
+                style="animation-delay: 0.4s"
+              >
                 <div>
                   <div class="text-3xl font-bold text-white">500+</div>
                   <div class="text-sm text-gray-400">Empresas</div>
@@ -396,11 +474,13 @@
                 </div>
               </div>
             </div>
-            
+
             <div class="flex justify-center lg:justify-end">
               <div class="relative float-animation w-full max-w-md lg:max-w-lg">
                 <!-- Glow effect -->
-                <div class="absolute inset-0 bg-gradient-to-r from-blue-600/30 to-purple-600/30 rounded-full blur-3xl"></div>
+                <div
+                  class="absolute inset-0 bg-gradient-to-r from-blue-600/30 to-purple-600/30 rounded-full blur-3xl"
+                ></div>
                 <lottie-player
                   src="https://assets7.lottiefiles.com/packages/lf20_M9p23l.json"
                   background="transparent"
@@ -418,10 +498,15 @@
       </section>
 
       <!-- Beneficios Section -->
-      <section id="beneficios" class="relative py-20 bg-gray-800/50 backdrop-blur-sm overflow-hidden">
+      <section
+        id="beneficios"
+        class="relative py-20 bg-gray-800/50 backdrop-blur-sm overflow-hidden section-reveal"
+      >
         <!-- Background decoration -->
-        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-600/5 to-transparent pointer-events-none"></div>
-        
+        <div
+          class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-600/5 to-transparent pointer-events-none"
+        ></div>
+
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div class="text-center mb-16">
             <h2 class="text-4xl sm:text-5xl font-extrabold mb-4 gradient-text">
@@ -431,55 +516,127 @@
               Potencia tu negocio con tecnología de inteligencia artificial de vanguardia
             </p>
           </div>
-          
+
           <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Beneficio 1 -->
-            <article class="group relative bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm p-8 rounded-2xl border border-gray-700/50 hover:border-blue-500/50 transition-all duration-500 hover:shadow-xl hover:shadow-blue-500/20 hover:-translate-y-2">
-              <div class="absolute inset-0 bg-gradient-to-br from-blue-600/0 to-purple-600/0 group-hover:from-blue-600/10 group-hover:to-purple-600/10 rounded-2xl transition-all duration-500"></div>
-              
+            <article
+              class="group relative bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm p-8 rounded-2xl border border-gray-700/50 hover:border-blue-500/50 transition-all duration-500 hover:shadow-xl hover:shadow-blue-500/20 hover:-translate-y-2"
+            >
+              <div
+                class="absolute inset-0 bg-gradient-to-br from-blue-600/0 to-purple-600/0 group-hover:from-blue-600/10 group-hover:to-purple-600/10 rounded-2xl transition-all duration-500"
+              ></div>
+
               <div class="relative z-10">
-                <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl mb-5 flex items-center justify-center shadow-lg shadow-blue-500/50 group-hover:scale-110 transition-transform duration-300">
-                  <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                <div
+                  class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl mb-5 flex items-center justify-center shadow-lg shadow-blue-500/50 group-hover:scale-110 transition-transform duration-300"
+                >
+                  <svg
+                    class="w-7 h-7 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
                   </svg>
                 </div>
-                <h3 class="text-xl font-bold mb-3 text-white group-hover:text-blue-400 transition-colors">Atención 24/7</h3>
-                <p class="text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">
-                  Tus clientes reciben atención instantánea a cualquier hora. Sin interrupciones, sin esperas.
+                <h3
+                  class="text-xl font-bold mb-3 text-white group-hover:text-blue-400 transition-colors"
+                >
+                  Atención 24/7
+                </h3>
+                <p
+                  class="text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors"
+                >
+                  Tus clientes reciben atención instantánea a cualquier hora. Sin interrupciones,
+                  sin esperas.
                 </p>
               </div>
             </article>
 
             <!-- Beneficio 2 -->
-            <article class="group relative bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm p-8 rounded-2xl border border-gray-700/50 hover:border-purple-500/50 transition-all duration-500 hover:shadow-xl hover:shadow-purple-500/20 hover:-translate-y-2">
-              <div class="absolute inset-0 bg-gradient-to-br from-purple-600/0 to-pink-600/0 group-hover:from-purple-600/10 group-hover:to-pink-600/10 rounded-2xl transition-all duration-500"></div>
-              
+            <article
+              class="group relative bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm p-8 rounded-2xl border border-gray-700/50 hover:border-purple-500/50 transition-all duration-500 hover:shadow-xl hover:shadow-purple-500/20 hover:-translate-y-2"
+            >
+              <div
+                class="absolute inset-0 bg-gradient-to-br from-purple-600/0 to-pink-600/0 group-hover:from-purple-600/10 group-hover:to-pink-600/10 rounded-2xl transition-all duration-500"
+              ></div>
+
               <div class="relative z-10">
-                <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl mb-5 flex items-center justify-center shadow-lg shadow-purple-500/50 group-hover:scale-110 transition-transform duration-300">
-                  <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                <div
+                  class="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl mb-5 flex items-center justify-center shadow-lg shadow-purple-500/50 group-hover:scale-110 transition-transform duration-300"
+                >
+                  <svg
+                    class="w-7 h-7 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                    ></path>
                   </svg>
                 </div>
-                <h3 class="text-xl font-bold mb-3 text-white group-hover:text-purple-400 transition-colors">Análisis en Tiempo Real</h3>
-                <p class="text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">
-                  Monitorea y optimiza el rendimiento de tus interacciones al instante con métricas detalladas.
+                <h3
+                  class="text-xl font-bold mb-3 text-white group-hover:text-purple-400 transition-colors"
+                >
+                  Análisis en Tiempo Real
+                </h3>
+                <p
+                  class="text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors"
+                >
+                  Monitorea y optimiza el rendimiento de tus interacciones al instante con métricas
+                  detalladas.
                 </p>
               </div>
             </article>
 
             <!-- Beneficio 3 -->
-            <article class="group relative bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm p-8 rounded-2xl border border-gray-700/50 hover:border-pink-500/50 transition-all duration-500 hover:shadow-xl hover:shadow-pink-500/20 hover:-translate-y-2">
-              <div class="absolute inset-0 bg-gradient-to-br from-pink-600/0 to-blue-600/0 group-hover:from-pink-600/10 group-hover:to-blue-600/10 rounded-2xl transition-all duration-500"></div>
-              
+            <article
+              class="group relative bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm p-8 rounded-2xl border border-gray-700/50 hover:border-pink-500/50 transition-all duration-500 hover:shadow-xl hover:shadow-pink-500/20 hover:-translate-y-2"
+            >
+              <div
+                class="absolute inset-0 bg-gradient-to-br from-pink-600/0 to-blue-600/0 group-hover:from-pink-600/10 group-hover:to-blue-600/10 rounded-2xl transition-all duration-500"
+              ></div>
+
               <div class="relative z-10">
-                <div class="w-14 h-14 bg-gradient-to-br from-pink-500 to-pink-700 rounded-xl mb-5 flex items-center justify-center shadow-lg shadow-pink-500/50 group-hover:scale-110 transition-transform duration-300">
-                  <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path>
+                <div
+                  class="w-14 h-14 bg-gradient-to-br from-pink-500 to-pink-700 rounded-xl mb-5 flex items-center justify-center shadow-lg shadow-pink-500/50 group-hover:scale-110 transition-transform duration-300"
+                >
+                  <svg
+                    class="w-7 h-7 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
+                    ></path>
                   </svg>
                 </div>
-                <h3 class="text-xl font-bold mb-3 text-white group-hover:text-pink-400 transition-colors">IA Conversacional Avanzada</h3>
-                <p class="text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">
-                  Interacciones naturales y personalizadas que mejoran significativamente la experiencia del cliente.
+                <h3
+                  class="text-xl font-bold mb-3 text-white group-hover:text-pink-400 transition-colors"
+                >
+                  IA Conversacional Avanzada
+                </h3>
+                <p
+                  class="text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors"
+                >
+                  Interacciones naturales y personalizadas que mejoran significativamente la
+                  experiencia del cliente.
                 </p>
               </div>
             </article>
@@ -488,7 +645,7 @@
       </section>
 
       <!-- Precios Section -->
-      <section id="precios" class="py-20">
+      <section id="precios" class="py-20 section-reveal">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center mb-16">
             <h2 class="text-3xl sm:text-4xl font-bold mb-4 gradient-text">
@@ -501,14 +658,21 @@
 
           <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <!-- Plan Starter -->
-            <article class="group relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-700/50 hover:border-blue-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/20 hover:-translate-y-1">
+            <article
+              class="group relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-2xl p-8 border border-gray-700/50 hover:border-blue-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/20 hover:-translate-y-1"
+            >
               <!-- Animated gradient border -->
-              <div class="absolute inset-0 bg-gradient-to-br from-blue-600/0 to-purple-600/0 group-hover:from-blue-600/10 group-hover:to-purple-600/10 rounded-2xl transition-all duration-500"></div>
-              
+              <div
+                class="absolute inset-0 bg-gradient-to-br from-blue-600/0 to-purple-600/0 group-hover:from-blue-600/10 group-hover:to-purple-600/10 rounded-2xl transition-all duration-500"
+              ></div>
+
               <header class="text-center mb-8 relative z-10">
                 <h3 class="text-2xl font-bold mb-4 text-gray-100">Starter</h3>
                 <div class="mb-2">
-                  <span class="text-5xl font-extrabold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">329€</span>
+                  <span
+                    class="text-5xl font-extrabold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent"
+                    >329€</span
+                  >
                   <span class="text-lg text-gray-400 font-medium">/mes</span>
                 </div>
                 <p class="text-gray-400 text-sm mt-2">Perfecto para pequeñas empresas</p>
@@ -516,36 +680,92 @@
 
               <ul class="space-y-4 mb-10 relative z-10" role="list">
                 <li class="flex items-start group/item">
-                  <div class="flex-shrink-0 w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center mr-3 mt-0.5">
-                    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                  <div
+                    class="flex-shrink-0 w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center mr-3 mt-0.5"
+                  >
+                    <svg
+                      class="w-4 h-4 text-green-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M5 13l4 4L19 7"
+                      ></path>
                     </svg>
                   </div>
-                  <span class="text-gray-300 group-hover/item:text-white transition-colors">Hasta 600 interacciones/mes</span>
+                  <span class="text-gray-300 group-hover/item:text-white transition-colors"
+                    >Hasta 600 interacciones/mes</span
+                  >
                 </li>
                 <li class="flex items-start group/item">
-                  <div class="flex-shrink-0 w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center mr-3 mt-0.5">
-                    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                  <div
+                    class="flex-shrink-0 w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center mr-3 mt-0.5"
+                  >
+                    <svg
+                      class="w-4 h-4 text-green-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M5 13l4 4L19 7"
+                      ></path>
                     </svg>
                   </div>
-                  <span class="text-gray-300 group-hover/item:text-white transition-colors">Teléfono + WhatsApp</span>
+                  <span class="text-gray-300 group-hover/item:text-white transition-colors"
+                    >Teléfono + WhatsApp</span
+                  >
                 </li>
                 <li class="flex items-start group/item">
-                  <div class="flex-shrink-0 w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center mr-3 mt-0.5">
-                    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                  <div
+                    class="flex-shrink-0 w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center mr-3 mt-0.5"
+                  >
+                    <svg
+                      class="w-4 h-4 text-green-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M5 13l4 4L19 7"
+                      ></path>
                     </svg>
                   </div>
-                  <span class="text-gray-300 group-hover/item:text-white transition-colors">IA voz natural</span>
+                  <span class="text-gray-300 group-hover/item:text-white transition-colors"
+                    >IA voz natural</span
+                  >
                 </li>
                 <li class="flex items-start group/item">
-                  <div class="flex-shrink-0 w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center mr-3 mt-0.5">
-                    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                  <div
+                    class="flex-shrink-0 w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center mr-3 mt-0.5"
+                  >
+                    <svg
+                      class="w-4 h-4 text-green-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M5 13l4 4L19 7"
+                      ></path>
                     </svg>
                   </div>
-                  <span class="text-gray-300 group-hover/item:text-white transition-colors">Soporte por email</span>
+                  <span class="text-gray-300 group-hover/item:text-white transition-colors"
+                    >Soporte por email</span
+                  >
                 </li>
               </ul>
 
@@ -556,8 +776,18 @@
               >
                 <span class="flex items-center justify-center">
                   Comenzar Ahora
-                  <svg class="w-5 h-5 ml-2 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                  <svg
+                    class="w-5 h-5 ml-2 group-hover/btn:translate-x-1 transition-transform"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    ></path>
                   </svg>
                 </span>
               </button>
@@ -565,61 +795,150 @@
             </article>
 
             <!-- Plan Business -->
-            <article class="group relative bg-gradient-to-br from-blue-600/20 to-purple-600/20 backdrop-blur-sm rounded-2xl p-8 border-2 border-blue-500/70 price-card-popular transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/40 hover:-translate-y-2 hover:scale-105">
+            <article
+              class="group relative bg-gradient-to-br from-blue-600/20 to-purple-600/20 backdrop-blur-sm rounded-2xl p-8 border-2 border-blue-500/70 price-card-popular transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/40 hover:-translate-y-2 hover:scale-105"
+            >
               <div class="price-badge">⭐ Más Popular</div>
-              
+
               <!-- Animated gradient glow -->
-              <div class="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-500"></div>
-              
+              <div
+                class="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-500"
+              ></div>
+
               <header class="text-center mb-8 relative z-10">
                 <h3 class="text-2xl font-bold mb-4 text-white">Business</h3>
                 <div class="mb-2">
-                  <span class="text-6xl font-extrabold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 bg-clip-text text-transparent">719€</span>
+                  <span
+                    class="text-6xl font-extrabold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500 bg-clip-text text-transparent"
+                    >719€</span
+                  >
                   <span class="text-lg text-gray-300 font-medium">/mes</span>
                 </div>
-                <p class="text-gray-300 text-sm mt-2 font-medium">Ideal para empresas en crecimiento</p>
+                <p class="text-gray-300 text-sm mt-2 font-medium">
+                  Ideal para empresas en crecimiento
+                </p>
               </header>
 
               <ul class="space-y-4 mb-10 relative z-10" role="list">
                 <li class="flex items-start group/item">
-                  <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/30 flex items-center justify-center mr-3 mt-0.5">
-                    <svg class="w-4 h-4 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                  <div
+                    class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/30 flex items-center justify-center mr-3 mt-0.5"
+                  >
+                    <svg
+                      class="w-4 h-4 text-blue-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M5 13l4 4L19 7"
+                      ></path>
                     </svg>
                   </div>
-                  <span class="text-gray-200 group-hover/item:text-white font-medium transition-colors">Hasta 2000 interacciones/mes</span>
+                  <span
+                    class="text-gray-200 group-hover/item:text-white font-medium transition-colors"
+                    >Hasta 2000 interacciones/mes</span
+                  >
                 </li>
                 <li class="flex items-start group/item">
-                  <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/30 flex items-center justify-center mr-3 mt-0.5">
-                    <svg class="w-4 h-4 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                  <div
+                    class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/30 flex items-center justify-center mr-3 mt-0.5"
+                  >
+                    <svg
+                      class="w-4 h-4 text-blue-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M5 13l4 4L19 7"
+                      ></path>
                     </svg>
                   </div>
-                  <span class="text-gray-200 group-hover/item:text-white font-medium transition-colors">Informes detallados</span>
+                  <span
+                    class="text-gray-200 group-hover/item:text-white font-medium transition-colors"
+                    >Informes detallados</span
+                  >
                 </li>
                 <li class="flex items-start group/item">
-                  <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/30 flex items-center justify-center mr-3 mt-0.5">
-                    <svg class="w-4 h-4 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                  <div
+                    class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/30 flex items-center justify-center mr-3 mt-0.5"
+                  >
+                    <svg
+                      class="w-4 h-4 text-blue-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M5 13l4 4L19 7"
+                      ></path>
                     </svg>
                   </div>
-                  <span class="text-gray-200 group-hover/item:text-white font-medium transition-colors">Panel personalizado</span>
+                  <span
+                    class="text-gray-200 group-hover/item:text-white font-medium transition-colors"
+                    >Panel personalizado</span
+                  >
                 </li>
                 <li class="flex items-start group/item">
-                  <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/30 flex items-center justify-center mr-3 mt-0.5">
-                    <svg class="w-4 h-4 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                  <div
+                    class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/30 flex items-center justify-center mr-3 mt-0.5"
+                  >
+                    <svg
+                      class="w-4 h-4 text-blue-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M5 13l4 4L19 7"
+                      ></path>
                     </svg>
                   </div>
-                  <span class="text-gray-200 group-hover/item:text-white font-medium transition-colors">Soporte prioritario</span>
+                  <span
+                    class="text-gray-200 group-hover/item:text-white font-medium transition-colors"
+                    >Soporte prioritario</span
+                  >
                 </li>
                 <li class="flex items-start group/item">
-                  <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/30 flex items-center justify-center mr-3 mt-0.5">
-                    <svg class="w-4 h-4 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                  <div
+                    class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/30 flex items-center justify-center mr-3 mt-0.5"
+                  >
+                    <svg
+                      class="w-4 h-4 text-blue-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M5 13l4 4L19 7"
+                      ></path>
                     </svg>
                   </div>
-                  <span class="text-gray-200 group-hover/item:text-white font-medium transition-colors">Integración CRM</span>
+                  <span
+                    class="text-gray-200 group-hover/item:text-white font-medium transition-colors"
+                    >Integración CRM</span
+                  >
                 </li>
               </ul>
 
@@ -630,8 +949,18 @@
               >
                 <span class="flex items-center justify-center">
                   Empezar Ahora
-                  <svg class="w-5 h-5 ml-2 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                  <svg
+                    class="w-5 h-5 ml-2 group-hover/btn:translate-x-1 transition-transform"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2.5"
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    ></path>
                   </svg>
                 </span>
               </button>
@@ -639,17 +968,28 @@
             </article>
 
             <!-- Plan Ultra -->
-            <article class="group relative bg-gradient-to-br from-purple-600/15 to-pink-600/15 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/50 hover:border-purple-400 transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/30 hover:-translate-y-1">
+            <article
+              class="group relative bg-gradient-to-br from-purple-600/15 to-pink-600/15 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/50 hover:border-purple-400 transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/30 hover:-translate-y-1"
+            >
               <!-- Gradient overlay -->
-              <div class="absolute inset-0 bg-gradient-to-br from-purple-600/0 to-pink-600/0 group-hover:from-purple-600/10 group-hover:to-pink-600/10 rounded-2xl transition-all duration-500"></div>
-              
+              <div
+                class="absolute inset-0 bg-gradient-to-br from-purple-600/0 to-pink-600/0 group-hover:from-purple-600/10 group-hover:to-pink-600/10 rounded-2xl transition-all duration-500"
+              ></div>
+
               <header class="text-center mb-8 relative z-10">
-                <div class="inline-flex items-center justify-center px-3 py-1 bg-purple-500/20 border border-purple-400/30 rounded-full mb-4">
-                  <span class="text-xs font-bold text-purple-300 uppercase tracking-wide">Enterprise</span>
+                <div
+                  class="inline-flex items-center justify-center px-3 py-1 bg-purple-500/20 border border-purple-400/30 rounded-full mb-4"
+                >
+                  <span class="text-xs font-bold text-purple-300 uppercase tracking-wide"
+                    >Enterprise</span
+                  >
                 </div>
                 <h3 class="text-2xl font-bold mb-4 text-gray-100">Ultra</h3>
                 <div class="mb-2">
-                  <span class="text-5xl font-extrabold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">1.399€</span>
+                  <span
+                    class="text-5xl font-extrabold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent"
+                    >1.399€</span
+                  >
                   <span class="text-lg text-gray-400 font-medium">/mes</span>
                 </div>
                 <p class="text-gray-400 text-sm mt-2">Para grandes empresas</p>
@@ -657,44 +997,119 @@
 
               <ul class="space-y-4 mb-10 relative z-10" role="list">
                 <li class="flex items-start group/item">
-                  <div class="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/30 flex items-center justify-center mr-3 mt-0.5">
-                    <svg class="w-4 h-4 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                  <div
+                    class="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/30 flex items-center justify-center mr-3 mt-0.5"
+                  >
+                    <svg
+                      class="w-4 h-4 text-purple-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M5 13l4 4L19 7"
+                      ></path>
                     </svg>
                   </div>
-                  <span class="text-gray-300 group-hover/item:text-white transition-colors">4000 llamadas/mes</span>
+                  <span class="text-gray-300 group-hover/item:text-white transition-colors"
+                    >4000 llamadas/mes</span
+                  >
                 </li>
                 <li class="flex items-start group/item">
-                  <div class="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/30 flex items-center justify-center mr-3 mt-0.5">
-                    <svg class="w-4 h-4 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                  <div
+                    class="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/30 flex items-center justify-center mr-3 mt-0.5"
+                  >
+                    <svg
+                      class="w-4 h-4 text-purple-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M5 13l4 4L19 7"
+                      ></path>
                     </svg>
                   </div>
-                  <span class="text-gray-300 group-hover/item:text-white transition-colors">API dedicada</span>
+                  <span class="text-gray-300 group-hover/item:text-white transition-colors"
+                    >API dedicada</span
+                  >
                 </li>
                 <li class="flex items-start group/item">
-                  <div class="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/30 flex items-center justify-center mr-3 mt-0.5">
-                    <svg class="w-4 h-4 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                  <div
+                    class="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/30 flex items-center justify-center mr-3 mt-0.5"
+                  >
+                    <svg
+                      class="w-4 h-4 text-purple-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M5 13l4 4L19 7"
+                      ></path>
                     </svg>
                   </div>
-                  <span class="text-gray-300 group-hover/item:text-white transition-colors">Personalización total</span>
+                  <span class="text-gray-300 group-hover/item:text-white transition-colors"
+                    >Personalización total</span
+                  >
                 </li>
                 <li class="flex items-start group/item">
-                  <div class="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/30 flex items-center justify-center mr-3 mt-0.5">
-                    <svg class="w-4 h-4 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                  <div
+                    class="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/30 flex items-center justify-center mr-3 mt-0.5"
+                  >
+                    <svg
+                      class="w-4 h-4 text-purple-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M5 13l4 4L19 7"
+                      ></path>
                     </svg>
                   </div>
-                  <span class="text-gray-300 group-hover/item:text-white transition-colors">Soporte 24/7 dedicado</span>
+                  <span class="text-gray-300 group-hover/item:text-white transition-colors"
+                    >Soporte 24/7 dedicado</span
+                  >
                 </li>
                 <li class="flex items-start group/item">
-                  <div class="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/30 flex items-center justify-center mr-3 mt-0.5">
-                    <svg class="w-4 h-4 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                  <div
+                    class="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/30 flex items-center justify-center mr-3 mt-0.5"
+                  >
+                    <svg
+                      class="w-4 h-4 text-purple-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M5 13l4 4L19 7"
+                      ></path>
                     </svg>
                   </div>
-                  <span class="text-gray-300 group-hover/item:text-white transition-colors">SLA garantizado 99.9%</span>
+                  <span class="text-gray-300 group-hover/item:text-white transition-colors"
+                    >SLA garantizado 99.9%</span
+                  >
                 </li>
               </ul>
 
@@ -705,8 +1120,18 @@
               >
                 <span class="flex items-center justify-center">
                   Contactar Ventas
-                  <svg class="w-5 h-5 ml-2 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                  <svg
+                    class="w-5 h-5 ml-2 group-hover/btn:translate-x-1 transition-transform"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    ></path>
                   </svg>
                 </span>
               </button>
@@ -726,7 +1151,7 @@
       </section>
 
       <!-- CTA Section -->
-      <section class="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+      <section class="py-20 bg-gradient-to-r from-blue-600 to-purple-600 section-reveal">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 class="text-3xl sm:text-4xl font-bold mb-6">
             ¿Listo para revolucionar tu atención al cliente?
@@ -737,6 +1162,7 @@
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="/auth.html?register=true"
+              data-prefetch="/auth.html"
               class="px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition-all duration-200 focus-visible"
             >
               Prueba Gratuita 14 Días
@@ -754,133 +1180,7 @@
 
     <!-- Scripts -->
     <script type="module" src="/js/checkout.js"></script>
-    <script type="module">
-      // Navigation functionality
-      import { DomUtils, AsyncUtils } from './js/utils/helpers.js';
-
-      class NavigationManager {
-        constructor() {
-          this.mobileMenuOpen = false;
-          this.initEventListeners();
-        }
-
-        initEventListeners() {
-          // Mobile menu toggle
-          const mobileMenuButton = DomUtils.$('#mobile-menu-button');
-          const mobileMenu = DomUtils.$('#mobile-menu');
-
-          if (mobileMenuButton && mobileMenu) {
-            mobileMenuButton.addEventListener('click', () => {
-              this.toggleMobileMenu();
-            });
-          }
-
-          // Smooth scroll for anchor links
-          document.addEventListener('click', (e) => {
-            if (e.target.matches('a[href^="#"]')) {
-              e.preventDefault();
-              const href = e.target.getAttribute('href');
-              DomUtils.scrollToElement(href);
-
-              // Close mobile menu if open
-              if (this.mobileMenuOpen) {
-                this.toggleMobileMenu();
-              }
-            }
-          });
-
-          // Close mobile menu on window resize
-          window.addEventListener(
-            'resize',
-            AsyncUtils.debounce(() => {
-              if (window.innerWidth >= 768 && this.mobileMenuOpen) {
-                this.toggleMobileMenu();
-              }
-            }, 250)
-          );
-        }
-
-        toggleMobileMenu() {
-          const mobileMenu = DomUtils.$('#mobile-menu');
-          const menuClosedIcon = DomUtils.$('#menu-closed-icon');
-          const menuOpenIcon = DomUtils.$('#menu-open-icon');
-
-          if (!mobileMenu) return;
-
-          this.mobileMenuOpen = !this.mobileMenuOpen;
-
-          if (this.mobileMenuOpen) {
-            DomUtils.addClass(mobileMenu, 'open');
-            DomUtils.hide(menuClosedIcon);
-            DomUtils.show(menuOpenIcon);
-          } else {
-            DomUtils.removeClass(mobileMenu, 'open');
-            DomUtils.show(menuClosedIcon);
-            DomUtils.hide(menuOpenIcon);
-          }
-        }
-      }
-
-      // Performance monitoring
-      class PerformanceMonitor {
-        constructor() {
-          this.initObservers();
-        }
-
-        initObservers() {
-          // Intersection Observer for lazy loading and animations
-          const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '50px',
-          };
-
-          const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                DomUtils.addClass(entry.target, 'in-view');
-              }
-            });
-          }, observerOptions);
-
-          // Observe all sections for potential animations
-          DomUtils.$$('section').forEach((section) => {
-            observer.observe(section);
-          });
-
-          // Monitor Core Web Vitals
-          this.monitorWebVitals();
-        }
-
-        monitorWebVitals() {
-          window.addEventListener('load', () => {
-            const navigation = performance.getEntriesByType('navigation')[0];
-            if (navigation) {
-              console.log(
-                'Page load time:',
-                Math.round(navigation.loadEventEnd - navigation.loadEventStart),
-                'ms'
-              );
-            }
-          });
-        }
-      }
-
-      // Initialize managers
-      document.addEventListener('DOMContentLoaded', () => {
-        try {
-          new NavigationManager();
-          new PerformanceMonitor();
-          console.log('✓ BrainCore landing page initialized');
-        } catch (error) {
-          console.error('Error initializing landing page:', error);
-        }
-      });
-
-      // Global error handling
-      window.addEventListener('unhandledrejection', (event) => {
-        console.error('Unhandled promise rejection:', event.reason);
-      });
-    </script>
+    <script type="module" src="/js/index.js"></script>
 
     <!-- Schema.org structured data -->
     <script type="application/ld+json">

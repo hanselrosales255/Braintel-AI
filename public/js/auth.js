@@ -126,7 +126,7 @@ async function handleSignUp() {
       password,
       metadata: {
         full_name: email.split('@')[0],
-      }
+      },
     });
 
     if (result.error) {
@@ -144,10 +144,10 @@ async function handleSignUp() {
     }, 1500);
   } catch (error) {
     console.error('❌ Error en handleSignUp:', error);
-    
+
     // Mensaje de error personalizado
     let errorMessage = 'Error al registrarse';
-    
+
     if (error.message?.includes('User already registered')) {
       errorMessage = 'Este email ya está registrado. Intenta iniciar sesión';
     } else if (error.message?.includes('Password')) {
@@ -157,7 +157,7 @@ async function handleSignUp() {
     } else if (error.message) {
       errorMessage = error.message;
     }
-    
+
     ErrorUtils.log(error, { context: 'handleSignUp' });
     showMessage(errorMessage, true);
 
@@ -194,7 +194,7 @@ async function handleSignIn() {
     // Iniciar sesión
     const result = await supabaseService.signIn({
       email,
-      password
+      password,
     });
 
     if (result.error) {
@@ -225,10 +225,10 @@ async function handleSignIn() {
     }
   } catch (error) {
     console.error('❌ Error en handleSignIn:', error);
-    
+
     // Mensaje de error personalizado
     let errorMessage = 'Error al iniciar sesión';
-    
+
     if (error.message?.includes('Invalid login credentials')) {
       errorMessage = 'Email o contraseña incorrectos';
     } else if (error.message?.includes('Email not confirmed')) {
@@ -238,7 +238,7 @@ async function handleSignIn() {
     } else if (error.message) {
       errorMessage = error.message;
     }
-    
+
     ErrorUtils.log(error, { context: 'handleSignIn' });
     showMessage(errorMessage, true);
 
@@ -255,6 +255,8 @@ async function handleSignIn() {
 function toggleForms(formToShow) {
   const signInForm = DomUtils.$('#signInForm');
   const signUpForm = DomUtils.$('#signUpForm');
+  const strengthText = DomUtils.$('#password-strength-text');
+  const passwordInput = DomUtils.$('#password');
 
   if (!signInForm || !signUpForm) {
     console.warn('Formularios no encontrados');
@@ -264,15 +266,98 @@ function toggleForms(formToShow) {
   if (formToShow === 'signUp') {
     DomUtils.hide(signInForm);
     DomUtils.show(signUpForm);
-    // Limpiar mensaje
-    const messageEl = DomUtils.$('#message');
-    if (messageEl) messageEl.textContent = '';
+    showStrengthGuidelines();
+    if (passwordInput?.value) {
+      updatePasswordStrength(passwordInput.value);
+    }
   } else {
     DomUtils.hide(signUpForm);
     DomUtils.show(signInForm);
-    // Limpiar mensaje
-    const messageEl = DomUtils.$('#message');
-    if (messageEl) messageEl.textContent = '';
+    hideStrengthIndicator();
+  }
+
+  updateAuthModeParam(formToShow === 'signUp' ? 'signUp' : 'signIn');
+
+  // Limpiar mensajes de feedback
+  const messageEl = DomUtils.$('#message');
+  if (messageEl) {
+    messageEl.textContent = '';
+  }
+
+  if (strengthText) {
+    strengthText.setAttribute('aria-live', 'polite');
+  }
+}
+
+function updateAuthModeParam(mode) {
+  if (!window?.history?.replaceState) return;
+
+  try {
+    const url = new URL(window.location.href);
+
+    if (mode === 'signUp') {
+      url.searchParams.set('register', 'true');
+    } else {
+      url.searchParams.delete('register');
+    }
+
+    window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+  } catch (error) {
+    console.warn('No se pudo actualizar el parámetro de autenticación', error);
+  }
+}
+
+function showStrengthGuidelines() {
+  const wrapper = DomUtils.$('#passwordStrength');
+  const bar = DomUtils.$('#passwordStrengthBar');
+  const text = DomUtils.$('#password-strength-text');
+
+  if (wrapper) {
+    DomUtils.show(wrapper);
+  }
+
+  if (bar) {
+    bar.style.width = '0%';
+    bar.style.backgroundColor = '#1f2937';
+  }
+
+  if (text) {
+    text.textContent =
+      'Tu contraseña debe incluir: 8+ caracteres, mayúscula, minúscula, número y carácter especial.';
+    text.style.color = '#94A3B8';
+    DomUtils.show(text);
+  }
+}
+
+function hideStrengthIndicator() {
+  const wrapper = DomUtils.$('#passwordStrength');
+  const bar = DomUtils.$('#passwordStrengthBar');
+  const text = DomUtils.$('#password-strength-text');
+
+  if (bar) {
+    bar.style.width = '0%';
+    bar.style.backgroundColor = '';
+  }
+
+  if (text) {
+    text.textContent = '';
+    text.style.color = '';
+    DomUtils.hide(text);
+  }
+
+  if (wrapper) {
+    DomUtils.hide(wrapper);
+  }
+}
+
+function applyInitialModeFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const shouldRegister = params.get('register') === 'true';
+
+  if (shouldRegister) {
+    toggleForms('signUp');
+  } else {
+    toggleForms('signIn');
   }
 }
 
@@ -298,11 +383,6 @@ function initializeEventListeners() {
     toggleSignUp.addEventListener('click', (e) => {
       e.preventDefault();
       toggleForms('signUp');
-      // Mostrar validador de contraseña
-      const strengthIndicator = DomUtils.$('#passwordStrength');
-      const strengthText = DomUtils.$('#password-strength-text');
-      if (strengthIndicator) DomUtils.show(strengthIndicator);
-      if (strengthText) DomUtils.show(strengthText);
     });
   }
 
@@ -312,11 +392,6 @@ function initializeEventListeners() {
     toggleSignIn.addEventListener('click', (e) => {
       e.preventDefault();
       toggleForms('signIn');
-      // Ocultar validador de contraseña
-      const strengthIndicator = DomUtils.$('#passwordStrength');
-      const strengthText = DomUtils.$('#password-strength-text');
-      if (strengthIndicator) DomUtils.hide(strengthIndicator);
-      if (strengthText) DomUtils.hide(strengthText);
     });
   }
 
@@ -327,10 +402,15 @@ function initializeEventListeners() {
       const password = e.target.value;
       const signUpForm = DomUtils.$('#signUpForm');
       const isSignUpVisible = !signUpForm?.classList.contains('hidden');
-      
-      // Solo mostrar validación en formulario de registro
-      if (isSignUpVisible && password.length > 0) {
-        updatePasswordStrength(password);
+
+      if (isSignUpVisible) {
+        if (password.length > 0) {
+          updatePasswordStrength(password);
+        } else {
+          showStrengthGuidelines();
+        }
+      } else {
+        hideStrengthIndicator();
       }
     });
   }
@@ -356,6 +436,8 @@ function initializeEventListeners() {
     passwordInput.addEventListener('keypress', handleEnter);
   }
 
+  applyInitialModeFromUrl();
+
   console.log('✓ Event listeners de autenticación inicializados');
 }
 
@@ -364,25 +446,30 @@ function initializeEventListeners() {
  * @param {string} password - Contraseña a validar
  */
 function updatePasswordStrength(password) {
+  const strengthWrapper = DomUtils.$('#passwordStrength');
   const strengthBar = DomUtils.$('#passwordStrengthBar');
   const strengthText = DomUtils.$('#password-strength-text');
-  
+
   if (!strengthBar || !strengthText) return;
+
+  if (strengthWrapper) {
+    DomUtils.show(strengthWrapper);
+  }
 
   const requirements = {
     length: password.length >= 8,
     uppercase: /[A-Z]/.test(password),
     lowercase: /[a-z]/.test(password),
     number: /[0-9]/.test(password),
-    special: /[@$!%*?&#]/.test(password)
+    special: /[@$!%*?&#]/.test(password),
   };
 
   const metRequirements = Object.values(requirements).filter(Boolean).length;
-  
+
   let strength = 'débil';
   let color = '#EF4444'; // red
   let width = '25%';
-  
+
   if (metRequirements >= 5) {
     strength = 'fuerte';
     color = '#10B981'; // green
@@ -400,23 +487,21 @@ function updatePasswordStrength(password) {
   // Actualizar barra
   strengthBar.style.width = width;
   strengthBar.style.backgroundColor = color;
-  
+
   // Actualizar texto con requisitos
   const requirementsList = [
     { met: requirements.length, text: '8+ caracteres' },
     { met: requirements.uppercase, text: 'Mayúscula' },
     { met: requirements.lowercase, text: 'Minúscula' },
     { met: requirements.number, text: 'Número' },
-    { met: requirements.special, text: 'Especial (@$!%*?&#)' }
+    { met: requirements.special, text: 'Especial (@$!%*?&#)' },
   ];
 
-  const reqText = requirementsList
-    .map(req => `${req.met ? '✓' : '✗'} ${req.text}`)
-    .join(' • ');
+  const reqText = requirementsList.map((req) => `${req.met ? '✓' : '✗'} ${req.text}`).join(' • ');
 
   strengthText.textContent = `Fuerza: ${strength} | ${reqText}`;
   strengthText.style.color = color;
-  
+
   DomUtils.show(strengthText);
 }
 
