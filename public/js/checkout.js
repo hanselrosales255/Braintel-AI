@@ -39,7 +39,7 @@ async function handleCheckoutClick(e) {
     // Verificar autenticación
     console.log('🔐 Verificando autenticación...');
     const result = await supabaseService.getCurrentUser();
-    
+
     if (!result.user) {
       console.warn('⚠️ Usuario no autenticado');
       NotificationUtils.warning('Debes iniciar sesión para continuar');
@@ -84,10 +84,10 @@ async function handleCheckoutClick(e) {
     }
   } catch (error) {
     console.error('❌ Error en handleCheckoutClick:', error);
-    
+
     // Mensajes de error personalizados
     let errorMessage = 'Error al procesar el pago. Inténtalo de nuevo.';
-    
+
     if (error.message?.includes('fetch')) {
       errorMessage = 'Error de conexión. Verifica tu internet e inténtalo de nuevo.';
     } else if (error.message?.includes('sessionId')) {
@@ -95,7 +95,7 @@ async function handleCheckoutClick(e) {
     } else if (error.message) {
       errorMessage = error.message;
     }
-    
+
     ErrorUtils.log(error, {
       context: 'handleCheckoutClick',
       priceId,

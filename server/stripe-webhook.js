@@ -1,64 +1,80 @@
-require('dotenv').config();
 const express = require('express');
-const Stripe = require('stripe');
-const { createClient } = require('@supabase/supabase-js');
+const config = require('./config');
+const logger = require('./logger');
+const { stripe } = require('./services/stripeService');
+const {
+  upsertSubscriptionByStripeId,
+  updateSubscriptionStatus,
+} = require('./services/supabaseService');
 
 const app = express();
-// Stripe requires raw body for signature verification
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-  const sig = req.headers['stripe-signature'];
+  if (!config.stripe.webhookSecret) {
+    logger.error('El STRIPE_WEBHOOK_SECRET no está configurado');
+    return res.status(500).json({ error: 'Configuración incompleta' });
+  }
+
+  const signature = req.headers['stripe-signature'];
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-  } catch (err) {
-    console.log('Webhook signature verification failed.', err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    event = stripe.webhooks.constructEvent(req.body, signature, config.stripe.webhookSecret);
+  } catch (error) {
+    logger.warn('Firma de webhook inválida', { error: error.message });
+    return res.status(400).send(`Webhook Error: ${error.message}`);
   }
 
-  // Handle events
-  const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
-  switch (event.type) {
-    case 'checkout.session.completed':
-      {
+  try {
+    switch (event.type) {
+      case 'checkout.session.completed': {
         const session = event.data.object;
-        // Actualiza la suscripción/pedido en supabase
-        // Buscar subscription por customer_id / session.subscription
-        await supabase.from('subscriptions').upsert(
-          {
-            stripe_subscription_id: session.subscription,
-            stripe_customer_id: session.customer,
-            status: 'active',
-            // Puedes llenar company_id si lo guardaste anteriomente
-          },
-          { onConflict: 'stripe_subscription_id' }
-        );
+        await upsertSubscriptionByStripeId({
+          subscriptionId: session.subscription,
+          customerId: session.customer,
+          status: 'active',
+          companyId: session.metadata?.company_id,
+          userId: session.metadata?.profile_id,
+        });
+        break;
       }
-      break;
-    case 'invoice.payment_succeeded':
-      {
+      case 'invoice.payment_succeeded': {
         const invoice = event.data.object;
-        // Actualizar estado de subscription si necesitas
+        if (invoice.subscription) {
+          await updateSubscriptionStatus(invoice.subscription, 'active');
+        }
+        break;
       }
-      break;
-    case 'customer.subscription.deleted':
-      {
-        const sub = event.data.object;
-        await supabase
-          .from('subscriptions')
-          .update({ status: 'canceled' })
-          .eq('stripe_subscription_id', sub.id);
+      case 'invoice.payment_failed': {
+        const invoice = event.data.object;
+        if (invoice.subscription) {
+          await updateSubscriptionStatus(invoice.subscription, 'past_due');
+        }
+        break;
       }
-      break;
-    default:
-      console.log(`Unhandled event type ${event.type}`);
-  }
+      case 'customer.subscription.deleted': {
+        const subscription = event.data.object;
+        await updateSubscriptionStatus(subscription.id, 'canceled');
+        break;
+      }
+      default: {
+        logger.debug(`Evento de Stripe no manejado: ${event.type}`);
+      }
+    }
 
-  res.json({ received: true });
+    res.json({ received: true });
+  } catch (error) {
+    logger.error('Error procesando webhook de Stripe', {
+      eventType: event?.type,
+      error: error.message,
+    });
+    res.status(500).json({ error: 'Error interno procesando el webhook' });
+  }
 });
 
-const PORT = process.env.PORT || 4243;
-app.listen(PORT, () => console.log(`Webhook server listening on ${PORT}`));
+const PORT = config.webhooks?.stripePort || 4243;
+app.listen(PORT, () =>
+  logger.info(`Servidor de webhooks de Stripe escuchando`, {
+    port: PORT,
+  })
+);

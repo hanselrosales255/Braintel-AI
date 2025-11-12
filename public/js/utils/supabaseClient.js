@@ -6,7 +6,7 @@
  */
 
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-import { SUPABASE_CONFIG, ERROR_MESSAGES } from './constants.js';
+import { SUPABASE_CONFIG } from './constants.js';
 
 // Crear instancia única del cliente
 const supabaseClient = createClient(SUPABASE_CONFIG.URL, SUPABASE_CONFIG.ANON_KEY, {

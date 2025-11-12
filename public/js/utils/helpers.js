@@ -57,8 +57,8 @@ export const StringUtils = {
       .toLowerCase()
       .trim()
       .replace(/\s+/g, '-')
-      .replace(/[^\w\-]+/g, '')
-      .replace(/\-\-+/g, '-')
+      .replace(/[^\w-]+/g, '')
+      .replace(/-{2,}/g, '-')
       .replace(/^-+/, '')
       .replace(/-+$/, '');
   },
@@ -886,28 +886,25 @@ export const HttpUtils = {
    * @returns {Promise}
    */
   async fetch(url, options = {}) {
-    try {
-      const response = await fetch(url, {
-        ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-          ...options.headers,
-        },
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        ...options.headers,
+      },
+    });
+
+    const payload = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw ErrorUtils.create(payload?.error || ERROR_MESSAGES.SERVER, 'HTTP_ERROR', {
+        status: response.status,
+        statusText: response.statusText,
       });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw ErrorUtils.create(errorData.error || ERROR_MESSAGES.SERVER, 'HTTP_ERROR', {
-          status: response.status,
-          statusText: response.statusText,
-        });
-      }
-
-      return await response.json();
-    } catch (error) {
-      throw error;
     }
+
+    return payload;
   },
 
   /**

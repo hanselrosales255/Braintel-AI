@@ -5,18 +5,8 @@
  * Middleware robusto para validar tokens y sesiones de usuarios
  */
 
-const { createClient } = require('@supabase/supabase-js');
-
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  }
-);
+const logger = require('../logger');
+const { getUserFromToken, getActiveSubscription } = require('../services/supabaseService');
 
 /**
  * Middleware para verificar autenticación
@@ -36,12 +26,9 @@ async function requireAuth(req, res, next) {
     const token = authHeader.substring(7); // Remove 'Bearer '
 
     // Verificar token con Supabase
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser(token);
+    const { data, error } = await getUserFromToken(token);
 
-    if (error || !user) {
+    if (error || !data?.user) {
       return res.status(401).json({
         error: 'No autorizado',
         message: 'Token inválido o expirado',
@@ -50,13 +37,13 @@ async function requireAuth(req, res, next) {
     }
 
     // Agregar usuario a la request
-    req.user = user;
-    req.userId = user.id;
-    req.userEmail = user.email;
+    req.user = data.user;
+    req.userId = data.user.id;
+    req.userEmail = data.user.email;
 
     next();
   } catch (error) {
-    console.error('Error en middleware de autenticación:', error);
+    logger.error('Error en middleware de autenticación', { error: error.message });
     return res.status(500).json({
       error: 'Error del servidor',
       message: 'Error al verificar autenticación',
@@ -81,13 +68,11 @@ async function optionalAuth(req, res, next) {
 
     const token = authHeader.substring(7);
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser(token);
+    const { data } = await getUserFromToken(token);
 
-    req.user = user || null;
-    req.userId = user?.id || null;
-    req.userEmail = user?.email || null;
+    req.user = data?.user || null;
+    req.userId = data?.user?.id || null;
+    req.userEmail = data?.user?.email || null;
 
     next();
   } catch (error) {
@@ -113,14 +98,13 @@ async function requireActiveSubscription(req, res, next) {
     }
 
     // Buscar suscripción activa
-    const { data: subscription, error } = await supabase
-      .from('subscriptions')
-      .select('*')
-      .eq('user_id', req.userId)
-      .eq('status', 'active')
-      .single();
+    const subscriptionResult = await getActiveSubscription(req.userId);
 
-    if (error || !subscription) {
+    if (subscriptionResult.error && subscriptionResult.error.code !== 'PGRST116') {
+      throw subscriptionResult.error;
+    }
+
+    if (!subscriptionResult.data) {
       return res.status(403).json({
         error: 'Suscripción requerida',
         message: 'No tienes una suscripción activa',
@@ -128,10 +112,10 @@ async function requireActiveSubscription(req, res, next) {
       });
     }
 
-    req.subscription = subscription;
+    req.subscription = subscriptionResult.data;
     next();
   } catch (error) {
-    console.error('Error verificando suscripción:', error);
+    logger.error('Error verificando suscripción', { error: error.message });
     return res.status(500).json({
       error: 'Error del servidor',
       message: 'Error al verificar suscripción',
@@ -144,5 +128,4 @@ module.exports = {
   requireAuth,
   optionalAuth,
   requireActiveSubscription,
-  supabase,
 };

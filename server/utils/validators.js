@@ -49,10 +49,7 @@ function isValidPassword(password) {
  */
 function isValidPriceId(priceId) {
   return (
-    priceId &&
-    typeof priceId === 'string' &&
-    priceId.startsWith('price_') &&
-    priceId.length > 10
+    priceId && typeof priceId === 'string' && priceId.startsWith('price_') && priceId.length > 10
   );
 }
 
